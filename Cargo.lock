@@ -850,6 +850,7 @@ name = "metamodel"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "chrono",
  "postgres-es",
  "serde",
  "sqlx",

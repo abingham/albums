@@ -1,112 +1,72 @@
-use metamodel::{next_instance_id, Entity, EntityAttrs, EntityVersion, InstanceId, UniqueId};
+use std::fmt::Display;
+
 use chrono::{self, Utc};
-use uuid::Uuid;
+use metamodel::{now, AggregateRoot, Entity};
 
-use aggregate_root::AggregateRoot;
-
-#[derive(AggregateRoot)]
 pub struct Album {
-    // Entity data
-    // TODO: Could we use another proc_macro to add these fields?
-    entity_attrs: EntityAttrs,
-
     // Album data
-    pub title: String,
+    title: String,
     // artist: String,
     // year: i32,
     // genre: String,
     // tracks: Vec<Track>,
 }
 
-impl Album {
-    fn new(entity_id: UniqueId, title: String) -> Self {
-        Album {
-            entity_attrs: EntityAttrs {
-                id: entity_id,
-                version: 0,
-                discarded: false,
-                instance_id: next_instance_id(),
+impl Display for Album {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Album: {}", self.title)
+    }
+}
+
+// impl Album {
+//     pub fn update_title(&mut self, title: String) {
+//         let event = now(Event::TitleUpdated {
+//             title,
+//         });
+
+//         self.apply_event(event);
+//         // publish(event);
+//     }
+// }
+
+pub enum Event {
+    Created {
+        // album data
+        title: String,
+    },
+    TitleUpdated {
+
+        // album data
+        title: String,
+    }
+}
+
+impl AggregateRoot for Album {
+    type Event = Event;
+
+    fn create_impl(event: &Self::Event) -> Self {
+        match event {
+            Event::Created { title } => Album {
+                title: title.clone(),
             },
-            title,
-            // artist,
-            // year,
-            // genre,
-            // tracks: Vec::new(),
+            _ => panic!("Event not supported")
         }
     }
 
-    pub fn set_title(&mut self, title: String) {
-        let event = MutationEvents::TitleUpdated {
-            aggregate_id: self.id,
-            aggregate_version: self.version + 1,
-            timestamp: Utc::now(),
-            title,
-        };
-        self._apply(event);
-        // publish(event)
+    fn apply_event_impl(album: &mut Album, event: &Event) {
+        match event {
+            Event::TitleUpdated { title } =>  {album.title = title.clone()}
+            _ => panic!("Event not supported")
+        }
     }
+} 
 
-    fn _apply(&mut self, event: MutationEvents) {
-        mutate(event, self);
-    }
-}
-
-pub enum CreationEvents {
-    Created {
-        // event data
-        aggregate_id: UniqueId,
-        timestamp: chrono::DateTime<Utc>,
-
-        // album data
-        title: String,
-    },
-}
-
-pub enum MutationEvents {
-    TitleUpdated {
-        // event data
-        aggregate_id: UniqueId,
-        aggregate_version: EntityVersion,
-        timestamp: chrono::DateTime<Utc>,
-
-        // album data
-        title: String,
-    },
-}
-
-pub fn add_album(title: String) -> Album {
-    let aggregate_id = Uuid::new_v4();
-    let event = CreationEvents::Created {
-        aggregate_id,
-        timestamp: Utc::now(),
+pub fn add_album(title: String) -> Entity<Album>{
+    let event = now(Event::Created {
         title,
-    };
+    });
 
-    let album = create(event);
+    let album = Album::create(event);
     // publish(event);
     album
 }
-
-fn create(event: CreationEvents) -> Album {
-    match event {
-        CreationEvents::Created {
-            aggregate_id,
-            timestamp: _,
-            title,
-        } => Album::new(aggregate_id, title),
-    }
-}
-
-fn mutate(event: MutationEvents, album: &mut Album) {
-    match event {
-        MutationEvents::TitleUpdated {
-            aggregate_id: _,
-            aggregate_version: _,
-            timestamp: _,
-            title,
-        } => {
-            album.title = title;
-        }
-    }
-}
-
