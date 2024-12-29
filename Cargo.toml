@@ -1,0 +1,2 @@
+[workspace]
+members = [ "aggregate_root", "albums", "driver", "metamodel"]
