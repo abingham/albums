@@ -25,12 +25,12 @@ fn impl_aggregate_root(ast: &syn::DeriveInput) -> TokenStream {
                 self.entity_attrs.version
             }
 
-            fn discarded(&self) -> bool {
-                false
+            fn inc_version(&mut self) {
+                self.entity_attrs.version += 1;
             }
 
-            fn aggregate_root_entity_id(&self) -> &impl Entity {
-                self
+            fn discarded(&self) -> bool {
+                self.entity_attrs.discarded
             }
         }
     };
