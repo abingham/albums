@@ -1,2 +1,2 @@
 [workspace]
-members = [ "aggregate_root", "albums", "driver", "metamodel"]
+members = [ "aggregate_root", "albums", "driver", "infrastructure", "metamodel"]
