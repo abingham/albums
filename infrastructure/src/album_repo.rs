@@ -1,4 +1,5 @@
-use albums::album::{Album, AlbumRepository, Event as AlbumEvent};
+use albums::album::{Album, AlbumRepository};
+use albums::events::Event as AlbumEvent;
 use metamodel::{entity::UniqueId, errors::NoSuchEntityError};
 use metamodel::aggregate_root::AggregateRoot;
 

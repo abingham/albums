@@ -6,6 +6,8 @@ use metamodel::errors::NoSuchEntityError;
 use metamodel::event::now;
 use metamodel::aggregate_root::AggregateRoot;
 
+use crate::events::Event;
+
 #[derive(AggregateRoot, Clone)]
 pub struct Album {
     // TODO: Can we use a macro to generate this boilerplate?
@@ -36,24 +38,14 @@ impl Display for Album {
 //     }
 // }
 
-#[derive(Clone)]
-pub enum Event {
-    Created {
-        // album data
-        title: String,
-    },
-    TitleUpdated {
-        // album data
-        title: String,
-    },
-}
+
 
 impl AggregateRoot for Album {
     type Event = Event;
 
     fn create_impl(event: &Self::Event) -> Self {
         match event {
-            Event::Created { title } => Album {
+            Event::AlbumCreated { title } => Album {
                 entity_attrs: EntityAttrs::new(),
                 title: title.clone(),
             },
@@ -63,14 +55,14 @@ impl AggregateRoot for Album {
 
     fn apply_event_impl(&mut self, event: &Event) {
         match event {
-            Event::TitleUpdated { title } => self.title = title.clone(),
+            Event::AlbumTitleUpdated { title } => self.title = title.clone(),
             _ => panic!("Event not supported"),
         }
     }
 }
 
 pub fn add_album(title: String) -> Album {
-    let event = now(Event::Created { title });
+    let event = now(Event::AlbumCreated { title });
 
     Album::create(&event)
 }

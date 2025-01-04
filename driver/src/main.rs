@@ -1,4 +1,5 @@
-use albums::album::{Event as AlbumEvent, add_album, AlbumRepository};
+use albums::album::{add_album, AlbumRepository};
+use albums::events::Event as AlbumEvent;
 use infrastructure::{in_memory_event_store::InMemoryEventStore, unit_of_work::UnitOfWork};
 use metamodel::entity::{Entity, UniqueId};
 
