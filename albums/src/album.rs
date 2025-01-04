@@ -36,6 +36,7 @@ impl Display for Album {
 //     }
 // }
 
+#[derive(Clone)]
 pub enum Event {
     Created {
         // album data

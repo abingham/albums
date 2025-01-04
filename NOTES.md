@@ -1,0 +1,1 @@
+- We have to specify "Clone" all over the place when dealing with Events. Can we simplify this somehow? Make it more expicit?

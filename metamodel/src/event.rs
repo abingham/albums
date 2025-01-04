@@ -2,14 +2,15 @@ use chrono::Utc;
 
 use crate::entity::{EntityVersion, UniqueId};
 
-pub struct Event<T> {
+#[derive(Clone)]
+pub struct Event<T> where T: Clone{
     pub aggregate_id: UniqueId,
     pub aggregate_version: EntityVersion,
     pub timestamp: chrono::DateTime<Utc>,
     pub body: T,
 }
 
-impl<T> Event<T> {
+impl<T: Clone> Event<T> {
     pub fn now(aggregate_id: UniqueId, aggregate_version: EntityVersion, body: T) -> Self {
         Event {
             aggregate_id,
@@ -20,7 +21,7 @@ impl<T> Event<T> {
     }
 }
 
-pub fn now<T>(body: T) -> Event<T> {
+pub fn now<T: Clone>(body: T) -> Event<T> {
     Event {
         aggregate_id: uuid::Uuid::new_v4(),
         aggregate_version: 0,

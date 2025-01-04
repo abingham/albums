@@ -1,5 +1,4 @@
 use albums::album::{Album, AlbumRepository, Event as AlbumEvent};
-use metamodel::event::Event;
 use metamodel::{entity::UniqueId, errors::NoSuchEntityError};
 use metamodel::aggregate_root::AggregateRoot;
 
@@ -10,12 +9,12 @@ impl AlbumRepository for InMemoryEventStore<AlbumEvent> {
         let mut maybe_album: Option<Album> = None;
         for event in self.events() {
             match maybe_album {
+                Some(ref mut album) => {
+                    album.apply_event(&event);
+                },
                 None => {
                     maybe_album = Some(Album::create(&event));
                 },
-                Some(ref mut album) => {
-                    album.apply_event(&event);
-                }
             }
         }
 
@@ -25,7 +24,7 @@ impl AlbumRepository for InMemoryEventStore<AlbumEvent> {
         }
     }
     
-    fn put(&self, id: UniqueId) {
+    fn put(&self, _id: UniqueId) {
         todo!()
     }
 }

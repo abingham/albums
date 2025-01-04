@@ -1,7 +1,7 @@
 use crate::{entity::Entity, event::Event};
 
 pub trait AggregateRoot: Entity + Sized {
-    type Event;
+    type Event: Clone;
 
     fn create(event: &Event<Self::Event>) -> Self {
         Self::create_impl(&event.body)
