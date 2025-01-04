@@ -5,10 +5,10 @@ use metamodel::aggregate_root::AggregateRoot;
 
 use crate::in_memory_event_store::InMemoryEventStore;
 
-impl AlbumRepository for InMemoryEventStore<Event<AlbumEvent>> {
+impl AlbumRepository for InMemoryEventStore<AlbumEvent> {
     fn get_album_by_id(&self, id: UniqueId) -> Result<albums::album::Album, NoSuchEntityError> {
         let mut maybe_album: Option<Album> = None;
-        for event in &self.events {
+        for event in self.events() {
             match maybe_album {
                 None => {
                     maybe_album = Some(Album::create(&event));
@@ -23,5 +23,9 @@ impl AlbumRepository for InMemoryEventStore<Event<AlbumEvent>> {
             None => Err(NoSuchEntityError::new(id)),
             Some(album) => Ok(album)
         }
+    }
+    
+    fn put(&self, id: UniqueId) {
+        todo!()
     }
 }

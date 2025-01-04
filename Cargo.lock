@@ -315,6 +315,8 @@ name = "driver"
 version = "0.1.0"
 dependencies = [
  "albums",
+ "infrastructure",
+ "metamodel",
 ]
 
 [[package]]

@@ -19,7 +19,6 @@ pub struct Album {
     // tracks: Vec<Track>,
 }
 
-
 impl Display for Album {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "Album: {}", self.title)
@@ -78,4 +77,5 @@ pub fn add_album(title: String) -> Album {
 
 pub trait AlbumRepository {
     fn get_album_by_id(&self, id: UniqueId) -> Result<Album, NoSuchEntityError>;
+    fn put(&self, id: UniqueId);
 }

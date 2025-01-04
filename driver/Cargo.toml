@@ -5,3 +5,5 @@ edition = "2021"
 
 [dependencies]
 albums = { path = "../albums"}
+infrastructure = { path = "../infrastructure"}
+metamodel = { path = "../metamodel"}
