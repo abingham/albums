@@ -756,6 +756,10 @@ dependencies = [
 [[package]]
 name = "infrastructure"
 version = "0.1.0"
+dependencies = [
+ "albums",
+ "metamodel",
+]
 
 [[package]]
 name = "itoa"

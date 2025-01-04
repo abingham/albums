@@ -4,12 +4,14 @@ pub type UniqueId = Uuid;
 pub type InstanceId = u64;
 pub type EntityVersion = u64;
 
+#[derive(Clone)]
 pub struct EntityAttrs {
     pub id: UniqueId,
     pub version: EntityVersion,
     pub discarded: bool,
     pub instance_id: InstanceId,
 }
+
 
 impl EntityAttrs {
     pub fn new() -> Self {

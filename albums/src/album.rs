@@ -2,10 +2,11 @@ use std::fmt::Display;
 
 use aggregate_root::AggregateRoot;
 use metamodel::entity::{Entity, EntityAttrs, InstanceId, UniqueId};
+use metamodel::errors::NoSuchEntityError;
 use metamodel::event::now;
 use metamodel::aggregate_root::AggregateRoot;
 
-#[derive(AggregateRoot)]
+#[derive(AggregateRoot, Clone)]
 pub struct Album {
     // TODO: Can we use a macro to generate this boilerplate?
     entity_attrs: EntityAttrs,
@@ -17,6 +18,7 @@ pub struct Album {
     // genre: String,
     // tracks: Vec<Track>,
 }
+
 
 impl Display for Album {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -70,5 +72,10 @@ impl AggregateRoot for Album {
 pub fn add_album(title: String) -> Album {
     let event = now(Event::Created { title });
 
-    Album::create(event)
+    Album::create(&event)
+}
+
+
+pub trait AlbumRepository {
+    fn get_album_by_id(&self, id: UniqueId) -> Result<Album, NoSuchEntityError>;
 }
