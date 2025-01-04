@@ -3,7 +3,7 @@ use std::fmt::Display;
 use aggregate_root::AggregateRoot;
 use metamodel::entity::{Entity, EntityAttrs, InstanceId, UniqueId};
 use metamodel::errors::NoSuchEntityError;
-use metamodel::event::now;
+use metamodel::event::{now, EventRouter};
 use metamodel::aggregate_root::AggregateRoot;
 
 use crate::events::Event;
@@ -61,8 +61,10 @@ impl AggregateRoot for Album {
     }
 }
 
-pub fn add_album(title: String) -> Album {
+pub fn add_album(title: String, router: &mut EventRouter<Event>) -> Album {
     let event = now(Event::AlbumCreated { title });
+
+    router.publish(&event);
 
     Album::create(&event)
 }

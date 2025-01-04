@@ -2,15 +2,18 @@ use albums::album::{add_album, AlbumRepository};
 use albums::events::Event as AlbumEvent;
 use infrastructure::{in_memory_event_store::InMemoryEventStore, unit_of_work::UnitOfWork};
 use metamodel::entity::{Entity, UniqueId};
+use metamodel::event::EventRouter;
 
 fn main() {
     let mut event_store = InMemoryEventStore::<AlbumEvent>::empty();
+    let mut event_router = EventRouter::<AlbumEvent>::new();
 
     // Create an album inside a unit of work and commit it
     let album_id: UniqueId;
     {
         let mut uow = UnitOfWork::on(&mut event_store);
-        let album = add_album("The Dark Side of the Moon".to_string());
+        event_router.add_listener(&mut uow);
+        let album = add_album("The Dark Side of the Moon".to_string(), &mut event_router);
         album_id = album.id();
         uow.commit();
     }
