@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 albums = { path = "../albums"}
 metamodel = { path = "../metamodel"}
+rusqlite = "0.32.1"
