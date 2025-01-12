@@ -17,7 +17,7 @@ impl<E: Clone> UnitOfWork<E> {
 
     pub fn commit(&mut self) {
         // Copy the events in the transient store into the permanent store.
-        for event in self.transient_events.events() {
+        for event in self.transient_events.iter() {
             self.event_store.append(event.clone());
         }
     }

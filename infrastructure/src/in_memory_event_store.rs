@@ -1,3 +1,5 @@
+use std::slice::Iter;
+
 use metamodel::event::Event;
 
 #[derive(Clone)]
@@ -12,12 +14,11 @@ impl<E: Clone> InMemoryEventStore<E> {
         }
     }
 
-    // TODO: Should be an iterator?
-    pub fn events(&self) -> &Vec<Event<E>> {
-        &self.events
-    }
-
     pub fn append(&mut self, event: Event<E>) {
         self.events.push(event);
+    }
+
+    pub fn iter(&self) -> Iter<Event<E>> {
+        self.events.iter()
     }
 }
