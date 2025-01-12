@@ -7,3 +7,4 @@ edition = "2021"
 albums = { path = "../albums"}
 infrastructure = { path = "../infrastructure"}
 metamodel = { path = "../metamodel"}
+serde = "1.0.217"

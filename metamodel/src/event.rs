@@ -1,10 +1,11 @@
 use chrono::Utc;
+use serde::Serialize;
 
 use crate::entity::{EntityVersion, UniqueId};
 
 pub trait EventBody: Clone {}
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Serialize)]
 pub struct Event<T> where T: EventBody {
     pub aggregate_id: UniqueId,
     pub aggregate_version: EntityVersion,

@@ -1,2 +1,3 @@
 [workspace]
 members = [ "aggregate_root", "albums", "driver", "infrastructure", "metamodel"]
+resolver = "2"
