@@ -30,18 +30,18 @@ pub fn now<E: Clone>(body: E) -> Event<E> {
     }
 }
 
-pub struct EventRouter<'a, E: Clone> {
-    listeners: Vec<&'a mut dyn EventListener<E>>
+pub struct EventRouter<E: Clone> {
+    listeners: Vec<Box<dyn EventListener<E>>>
 }
 
-impl<'a, E: Clone> EventRouter<'a, E> {
+impl<E: Clone> EventRouter<E> {
     pub fn new() -> Self {
         EventRouter {
             listeners: vec![]
         }
     }
 
-    pub fn add_listener(&mut self, listener: &'a mut dyn EventListener<E>) {
+    pub fn add_listener(&mut self, listener: Box<dyn EventListener<E>>) {
         self.listeners.push(listener);
     }
 

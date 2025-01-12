@@ -5,17 +5,17 @@ use metamodel::entity::{Entity, UniqueId};
 use metamodel::event::EventRouter;
 
 fn main() {
-    let mut event_store = InMemoryEventStore::<AlbumEvent>::empty();
+    let event_store = InMemoryEventStore::<AlbumEvent>::empty();
     let mut event_router = EventRouter::<AlbumEvent>::new();
 
     // Create an album inside a unit of work and commit it
     let album_id: UniqueId;
     {
-        let mut uow = UnitOfWork::on(&mut event_store);
-        event_router.add_listener(&mut uow);
+        let uow = UnitOfWork::on(&event_store);
+        event_router.add_listener(Box::new(uow));
         let album = add_album("The Dark Side of the Moon".to_string(), &mut event_router);
         album_id = album.id();
-        uow.commit();
+        // uow.commit();
     }
 
     // We should now be able to fetch the album from the repo.
