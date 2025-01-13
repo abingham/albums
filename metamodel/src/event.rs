@@ -2,15 +2,17 @@ use chrono::Utc;
 
 use crate::entity::{EntityVersion, UniqueId};
 
+pub trait EventBody: Clone {}
+
 #[derive(Clone)]
-pub struct Event<T> where T: Clone{
+pub struct Event<T> where T: EventBody {
     pub aggregate_id: UniqueId,
     pub aggregate_version: EntityVersion,
     pub timestamp: chrono::DateTime<Utc>,
     pub body: T,
 }
 
-impl<T: Clone> Event<T> {
+impl<T: EventBody> Event<T> {
     pub fn now(aggregate_id: UniqueId, aggregate_version: EntityVersion, body: T) -> Self {
         Event {
             aggregate_id,
@@ -21,7 +23,7 @@ impl<T: Clone> Event<T> {
     }
 }
 
-pub fn now<E: Clone>(body: E) -> Event<E> {
+pub fn now<E: EventBody>(body: E) -> Event<E> {
     Event {
         aggregate_id: uuid::Uuid::new_v4(),
         aggregate_version: 0,
@@ -30,11 +32,11 @@ pub fn now<E: Clone>(body: E) -> Event<E> {
     }
 }
 
-pub struct EventRouter<E: Clone> {
+pub struct EventRouter<E: EventBody> {
     listeners: Vec<Box<dyn EventListener<E>>>
 }
 
-impl<E: Clone> EventRouter<E> {
+impl<E: EventBody> EventRouter<E> {
     pub fn new() -> Self {
         EventRouter {
             listeners: vec![]
@@ -55,6 +57,6 @@ impl<E: Clone> EventRouter<E> {
 // TODO: I only added this because I coulnd't sort out the
 // more general "callable" syntax on the plane. Replace this
 // with something better soon.
-pub trait EventListener<E: Clone> {
+pub trait EventListener<E: EventBody> {
     fn receive(&mut self, event: &Event<E>);
 }

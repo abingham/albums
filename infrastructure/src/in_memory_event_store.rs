@@ -1,13 +1,13 @@
 use std::slice::Iter;
 
-use metamodel::event::Event;
+use metamodel::event::{Event, EventBody};
 
 #[derive(Clone)]
-pub struct InMemoryEventStore<E: Clone> {
+pub struct InMemoryEventStore<E: EventBody> {
     events: Vec<Event<E>>,
 }
 
-impl<E: Clone> InMemoryEventStore<E> {
+impl<E: EventBody> InMemoryEventStore<E> {
     pub fn empty() -> Self {
         InMemoryEventStore {
             events: vec![],

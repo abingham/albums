@@ -1,13 +1,13 @@
-use metamodel::event::EventListener;
+use metamodel::event::{EventBody, EventListener};
 
 use crate::in_memory_event_store::InMemoryEventStore;
 
-pub struct UnitOfWork<E: Clone> {
+pub struct UnitOfWork<E: EventBody> {
     transient_events: InMemoryEventStore<E>,
     event_store: InMemoryEventStore<E>
 }
 
-impl<E: Clone> UnitOfWork<E> {
+impl<E: EventBody> UnitOfWork<E> {
     pub fn on(store: &InMemoryEventStore<E>) -> Self {
         UnitOfWork {
             transient_events: InMemoryEventStore::<E>::empty(),
@@ -23,7 +23,7 @@ impl<E: Clone> UnitOfWork<E> {
     }
 }
 
-impl<E: Clone> EventListener<E> for UnitOfWork<E> {
+impl<E: EventBody> EventListener<E> for UnitOfWork<E> {
     fn receive(&mut self, event: &metamodel::event::Event<E>) {
         self.transient_events.append(event.clone());
     }
