@@ -1,3 +1,5 @@
+use std::marker::PhantomData;
+
 use chrono;
 use serde::{de::DeserializeOwned, Serialize};
 use uuid::Uuid;
@@ -8,8 +10,9 @@ use metamodel::{
 };
 use rusqlite;
 
-pub struct SqliteEventStore {
+pub struct SqliteEventStore<E> {
     conn: rusqlite::Connection,
+    p: PhantomData<E>
 }
 
 // Possible errors when using append()
@@ -29,7 +32,7 @@ pub enum IterError {
 
 struct Row(String, EntityVersion, String, String);
 
-impl SqliteEventStore {
+impl<E> SqliteEventStore<E> where E: EventBody + Serialize + DeserializeOwned {
     pub fn empty() -> Result<Self, rusqlite::Error> {
         let conn = rusqlite::Connection::open_in_memory()?;
         conn.execute(
@@ -42,10 +45,10 @@ impl SqliteEventStore {
             )",
             (), // empty list of parameters.
         )?;
-        Ok(Self { conn })
+        Ok(Self { conn, p: PhantomData })
     }
 
-    pub fn append<E: EventBody + Serialize>(&mut self, event: Event<E>) -> Result<(), AppendError> {
+    pub fn append(&mut self, event: Event<E>) -> Result<(), AppendError> {
         let event_str =
             serde_json::to_string(&event.body).map_err(|err| AppendError::Serialization(err))?;
 
@@ -61,7 +64,7 @@ impl SqliteEventStore {
         Ok(())
     }
 
-    pub fn iter<E: EventBody + DeserializeOwned>(
+    pub fn iter (
         &self,
     ) -> Result<Vec<metamodel::event::Event<E>>, IterError> {
         let mut stmt = self
@@ -137,15 +140,15 @@ mod tests {
 
     #[test]
     fn test_construct_empty() {
-        let store = SqliteEventStore::empty().unwrap();
-        let events = store.iter::<TestEvent>().unwrap();
+        let store = SqliteEventStore::<TestEvent>::empty().unwrap();
+        let events = store.iter().unwrap();
 
         assert_eq!(events.len(), 0);
     }
 
     #[test]
     fn test_append() {
-        let mut store = SqliteEventStore::empty().unwrap();
+        let mut store = SqliteEventStore::<TestEvent>::empty().unwrap();
 
         let event = now(TestEvent { x: 42 });
         store.append(event).unwrap();
@@ -153,11 +156,11 @@ mod tests {
 
     #[test]
     fn test_iter() {
-        let mut store = SqliteEventStore::empty().expect("invalid");
+        let mut store = SqliteEventStore::<TestEvent>::empty().expect("invalid");
         let event = now(TestEvent { x: 42 });
         store.append(event.clone()).unwrap();
 
-        let events = store.iter::<TestEvent>().unwrap();
+        let events = store.iter().unwrap();
 
         assert_eq!(events.len(), 1);
 
