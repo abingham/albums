@@ -4,7 +4,7 @@ use crate::in_memory_event_store::InMemoryEventStore;
 
 pub struct UnitOfWork<E: EventBody> {
     transient_events: InMemoryEventStore<E>,
-    event_store: InMemoryEventStore<E>
+    event_store: InMemoryEventStore<E>,
 }
 
 impl<E: EventBody> UnitOfWork<E> {

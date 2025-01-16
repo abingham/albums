@@ -1,7 +1,7 @@
 use albums::album::{Album, AlbumRepository};
 use albums::events::Event as AlbumEvent;
-use metamodel::{entity::UniqueId, errors::NoSuchEntityError};
 use metamodel::aggregate_root::AggregateRoot;
+use metamodel::{entity::UniqueId, errors::NoSuchEntityError};
 
 use crate::in_memory_event_store::InMemoryEventStore;
 
@@ -12,19 +12,19 @@ impl AlbumRepository for InMemoryEventStore<AlbumEvent> {
             match maybe_album {
                 Some(ref mut album) => {
                     album.apply_event(&event);
-                },
+                }
                 None => {
                     maybe_album = Some(Album::create(&event));
-                },
+                }
             }
         }
 
         match maybe_album {
             None => Err(NoSuchEntityError::new(id)),
-            Some(album) => Ok(album)
+            Some(album) => Ok(album),
         }
     }
-    
+
     fn put(&self, _id: UniqueId) {
         todo!()
     }

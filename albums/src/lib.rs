@@ -1,2 +1,2 @@
 pub mod album;
-pub mod events; 
+pub mod events;

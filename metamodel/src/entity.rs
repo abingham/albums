@@ -12,7 +12,6 @@ pub struct EntityAttrs {
     pub instance_id: InstanceId,
 }
 
-
 impl EntityAttrs {
     pub fn new() -> Self {
         EntityAttrs {

@@ -6,7 +6,10 @@ use crate::entity::{EntityVersion, UniqueId};
 pub trait EventBody: Clone {}
 
 #[derive(Clone, Debug, Serialize)]
-pub struct Event<T> where T: EventBody {
+pub struct Event<T>
+where
+    T: EventBody,
+{
     pub aggregate_id: UniqueId,
     pub aggregate_version: EntityVersion,
     pub timestamp: chrono::DateTime<Utc>,
@@ -34,14 +37,12 @@ pub fn now<E: EventBody>(body: E) -> Event<E> {
 }
 
 pub struct EventRouter<E: EventBody> {
-    listeners: Vec<Box<dyn EventListener<E>>>
+    listeners: Vec<Box<dyn EventListener<E>>>,
 }
 
 impl<E: EventBody> EventRouter<E> {
     pub fn new() -> Self {
-        EventRouter {
-            listeners: vec![]
-        }
+        EventRouter { listeners: vec![] }
     }
 
     pub fn add_listener(&mut self, listener: Box<dyn EventListener<E>>) {

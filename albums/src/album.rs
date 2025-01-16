@@ -1,10 +1,10 @@
 use std::fmt::Display;
 
 use aggregate_root::AggregateRoot;
+use metamodel::aggregate_root::AggregateRoot;
 use metamodel::entity::{Entity, EntityAttrs, InstanceId, UniqueId};
 use metamodel::errors::NoSuchEntityError;
 use metamodel::event::{now, EventRouter};
-use metamodel::aggregate_root::AggregateRoot;
 
 use crate::events::Event;
 
@@ -38,8 +38,6 @@ impl Display for Album {
 //     }
 // }
 
-
-
 impl AggregateRoot for Album {
     type Event = Event;
 
@@ -68,7 +66,6 @@ pub fn add_album(title: String, router: &mut EventRouter<Event>) -> Album {
 
     Album::create(&event)
 }
-
 
 pub trait AlbumRepository {
     fn get_album_by_id(&self, id: UniqueId) -> Result<Album, NoSuchEntityError>;

@@ -1,7 +1,7 @@
 use crate::entity::UniqueId;
 
 pub struct NoSuchEntityError {
-    id: UniqueId
+    id: UniqueId,
 }
 
 impl NoSuchEntityError {

@@ -1,5 +1,5 @@
-use crate::{entity::Entity, event::Event};
 use crate::event::EventBody;
+use crate::{entity::Entity, event::Event};
 
 pub trait AggregateRoot: Entity + Sized {
     type Event: EventBody;

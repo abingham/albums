@@ -9,9 +9,7 @@ pub struct InMemoryEventStore<E: EventBody> {
 
 impl<E: EventBody> InMemoryEventStore<E> {
     pub fn empty() -> Self {
-        InMemoryEventStore {
-            events: vec![],
-        }
+        InMemoryEventStore { events: vec![] }
     }
 
     pub fn append(&mut self, event: Event<E>) {
