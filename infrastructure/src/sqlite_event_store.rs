@@ -136,26 +136,26 @@ mod tests {
     impl EventBody for TestEvent {}
 
     #[test]
-    fn test_construct_empty() -> Result<(), rusqlite::Error> {
-        SqliteEventStore::empty()?;
-        Ok(())
+    fn test_construct_empty() {
+        let store = SqliteEventStore::empty().unwrap();
+        let events = store.iter::<TestEvent>().unwrap();
+
+        assert_eq!(events.len(), 0);
     }
 
     #[test]
-    fn test_append() -> Result<(), AppendError> {
-        let mut store = SqliteEventStore::empty().expect("invalid");
+    fn test_append() {
+        let mut store = SqliteEventStore::empty().unwrap();
 
         let event = now(TestEvent { x: 42 });
-        store.append(event)?;
-
-        Ok(())
+        store.append(event).unwrap();
     }
 
     #[test]
     fn test_iter() {
         let mut store = SqliteEventStore::empty().expect("invalid");
         let event = now(TestEvent { x: 42 });
-        store.append(event.clone()).expect("invalid");
+        store.append(event.clone()).unwrap();
 
         let events = store.iter::<TestEvent>().unwrap();
 
